@@ -9,6 +9,6 @@ public class Main {
         System.out.println("Hello world!");
 
         FilePractice fp = new FilePractice();
-        fp.test135();
+        fp.test136();
     }
 }
