@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.List;
+import java.util.Scanner;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class FilePractice {
@@ -83,8 +85,46 @@ public class FilePractice {
          * BufferedReader: 전통적인 방식, 메모리 사용량이 적고 단순한 파일 처리에 적합.
          * Files.lines(): 함수형 프로그래밍과 스트림 API에 적합하며, 대규모 파일 처리와 병렬 처리에 유리.
          */
+    }
 
+    public void test137() {
+        //137. 파일 트리에서 파일, 폴더 검색
+        //1) Files.walk() 사용
+        List<Path> pathList;
+        try (Stream<Path> pathStream = Files.walk(Paths.get(TEST_FOLDER_PATH));
+             Scanner scn = new Scanner(System.in);) {
 
+            String findStr = scn.next();
+            pathList = pathStream.map(Path::normalize)
+                    .filter(file -> file.getFileName().toString().contains(findStr))
+                    .toList();
+
+            System.out.println(pathList.toString());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void test137_1() {
+        //2) Files.find() 사용
+        List<Path> result;
+        Scanner scn = new Scanner(System.in);
+        String findStr = scn.next();
+        scn.close();
+
+        try (Stream<Path> resultAsStream =
+                Files.find(
+                        Paths.get(TEST_FOLDER_PATH),
+                        Integer.MAX_VALUE,
+                        ((path, basicFileAttributes) -> path.toString().contains(findStr)),
+                        FileVisitOption.FOLLOW_LINKS)) {
+
+            result = resultAsStream.collect(Collectors.toList());
+            System.out.println(result.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
